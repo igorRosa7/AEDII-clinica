@@ -11,6 +11,7 @@ class Paciente(Base):
     idpaciente = Column(Integer, primary_key=True, autoincrement=True)
     nome = Column(String(100), nullable=False)
     sexo = Column(String(10), nullable=False)
+    cpf = Column(String(11), nullable=False, unique=True)
     data_nascimento = Column(Date, nullable=False)
     telefone = Column(String(15), nullable=False)
     email = Column(String(45), nullable=False)

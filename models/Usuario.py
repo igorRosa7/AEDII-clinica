@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Date, DateTime, Time, Text, ForeignKey
+from sqlalchemy import Column, Integer, String
 from dao.BancoDados import Base
 
 class Usuario(Base):
@@ -8,8 +8,7 @@ class Usuario(Base):
     nome = Column(String(80), nullable=False)
     email = Column(String(80), nullable=False)
     senha = Column(String(100), nullable=False)
-    
-    
+
     def __init__(self, nome:str, email:str, senha:str):
         self.nome = nome
         self.email = email
