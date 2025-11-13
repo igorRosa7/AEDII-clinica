@@ -1,14 +1,14 @@
 from pydantic import BaseModel, Field
+from datetime import date
 
 class PacienteCreate(BaseModel):
-    idpaciente: int
     nome: str
     sexo: str
-    data_nascimento: str
+    data_nascimento: date
+    data_cadastro: date
     telefone: str
     email: str
     endereco: str
-    data_cadastro: str
     secretaria_idsecretaria: int
     cpf: str = Field(
         ...,
@@ -18,20 +18,19 @@ class PacienteCreate(BaseModel):
     )
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class PacienteResponse(BaseModel):
     """Retorno de dados do paciente."""
     idpaciente: int
     nome: str
     sexo: str
-    data_nascimento: str
     telefone: str
     email: str
     endereco: str
-    data_cadastro: str
     secretaria_idsecretaria: int
     cpf: str
+    
     
     class Config:
         from_attributes = True

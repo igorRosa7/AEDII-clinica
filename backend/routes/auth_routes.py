@@ -1,11 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
-from models import Usuario, Secretaria, Medico, Paciente
-
+from models import Usuario, Secretaria, Medico
 from schemas.usuario import UsuarioCreate, UsuarioResponse
 from schemas.secretaria import SecretariaCreate, SecretariaResponse
 from schemas.medico import MedicoCreate, MedicoResponse
-from schemas.paciente import PacienteCreate, PacienteResponse
-
 from sqlalchemy.orm import Session
 from dao.BancoDados import get_db
 from services.verifica_user import is_id_associado
@@ -33,9 +30,8 @@ async def criar_usuario(usuario: UsuarioCreate, db: Session = Depends(get_db)):
 async def criar_secretaria(secretaria: SecretariaCreate, db: Session = Depends(get_db)):
     usuario_id = secretaria.idsecretaria
     
-    # 1. VALIDAÇÃO DE NEGÓCIO: Confirma que o ID não está sendo usado por outro cargo
+    # Confirma que o ID não está sendo usado por outro cargo
     if is_id_associado(db, usuario_id):
-        # Aqui, você sabe que o ID já é Médico OU Secretária
         raise HTTPException(
             status_code=400, 
             detail=f"O ID {usuario_id} já está associado a outro cargo (Médico ou Secretária)."
@@ -56,16 +52,15 @@ async def criar_secretaria(secretaria: SecretariaCreate, db: Session = Depends(g
 
 @auth_router.post("/medicos/", response_model=MedicoResponse)
 async def criar_medico(medico: MedicoCreate, db: Session = Depends(get_db)):
+
     usuario_id = medico.idmedico
-    
-    # 1. VALIDAÇÃO DE NEGÓCIO: Confirma que o ID não está sendo usado por outro cargo
+
     if is_id_associado(db, usuario_id):
-        # Aqui, você sabe que o ID já é Médico OU Secretária
         raise HTTPException(
             status_code=400, 
             detail=f"O ID {usuario_id} já está associado a outro cargo (Médico ou Secretária)."
         )
-    # Verifica se o usuario existe
+
     usuario = db.query(Usuario).filter(Usuario.idusuario == medico.idmedico).first()
     if not usuario:
         raise HTTPException(status_code=404, detail="Usuário não encontrado para associar ao médico")

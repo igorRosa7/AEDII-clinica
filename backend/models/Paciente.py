@@ -1,9 +1,6 @@
-from sqlalchemy import create_engine, Column, Integer, String, Date, DateTime, Time, Text, ForeignKey
+from sqlalchemy import Column, Integer, String, Date, ForeignKey
 from dao.BancoDados import Base
-
-# ------------------------------------------------------------------
-# 3. Tabelas de Dados e Relacionamentos
-# ------------------------------------------------------------------
+from sqlalchemy.orm import relationship
 
 class Paciente(Base):
     __tablename__ = 'paciente'
@@ -17,6 +14,9 @@ class Paciente(Base):
     email = Column(String(45), nullable=False)
     endereco = Column(String(100), nullable=False)
     data_cadastro = Column(Date, nullable=False)
-    
-    # Chave Estrangeira
-    secretaria_idsecretaria = Column(ForeignKey('secretaria.idsecretaria'), nullable=False)
+    secretaria_idsecretaria = Column(
+        Integer, 
+        ForeignKey('secretaria.idsecretaria'),
+        nullable=False
+    )
+    agendas = relationship("Agenda", back_populates="paciente")

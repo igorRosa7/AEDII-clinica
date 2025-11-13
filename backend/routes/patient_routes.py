@@ -1,9 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from dao.BancoDados import get_db
-from models.Usuario import Usuario
-from models import  Paciente, Usuario 
-from models import Usuario, Secretaria, Paciente
+from schemas.paciente import PacienteCreate, PacienteResponse
+from models import  Paciente, Secretaria
 from schemas.paciente import PacienteCreate, PacienteResponse
 
 patiente_router = APIRouter(prefix="/patients", tags=["patiente"])
@@ -15,10 +14,6 @@ async def criar_paciente(paciente: PacienteCreate, db: Session = Depends(get_db)
     if not secretaria:
         raise HTTPException(status_code=404, detail="Secretária não encontrada para associar ao paciente")
     
-    usuario_base = db.query(Usuario).filter(
-        Usuario.idusuario == secretaria.idsecretaria # Usa o ID compartilhado
-    ).first()
-
     novo_paciente = Paciente(
         nome=paciente.nome,
         sexo=paciente.sexo,
@@ -35,7 +30,7 @@ async def criar_paciente(paciente: PacienteCreate, db: Session = Depends(get_db)
         db.flush()
         db.commit()
         return novo_paciente
-    except Exception as e:
+    except Exception:
         db.rollback()
         # ... (Seu tratamento de erro de CPF ou outro)
-        raise HTTPException(status_code=500, detail=f"Erro interno ao cadastrar paciente. Confira se o CPF já não está cadastrado.")
+    raise HTTPException(status_code=500, detail=f"Erro interno ao cadastrar paciente. Confira se o CPF já não está cadastrado.")
