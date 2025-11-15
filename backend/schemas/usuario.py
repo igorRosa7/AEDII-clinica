@@ -5,7 +5,7 @@ class UsuarioCreate(BaseModel):
     email: str
     senha: str
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UsuarioResponse(BaseModel):
     """Retorno do usuário, omitindo a senha."""

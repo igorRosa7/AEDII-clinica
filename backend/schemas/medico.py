@@ -6,7 +6,7 @@ class MedicoCreate(BaseModel):
     crm: str
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class MedicoResponse(BaseModel):
     """Retorno de dados do médico."""

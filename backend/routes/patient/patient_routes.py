@@ -5,9 +5,9 @@ from schemas.paciente import PacienteCreate, PacienteResponse
 from models import  Paciente, Secretaria
 from schemas.paciente import PacienteCreate, PacienteResponse
 
-patiente_router = APIRouter(prefix="/patients", tags=["patiente"])
+patiente_router = APIRouter(prefix="/pacientes", tags=["patienteRoutes"])
 
-@patiente_router.post("/", response_model=PacienteResponse)
+@patiente_router.post("/novo", response_model=PacienteResponse)
 async def criar_paciente(paciente: PacienteCreate, db: Session = Depends(get_db)):
     # Verifica se a secretária existe
     secretaria = db.query(Secretaria).filter(Secretaria.idsecretaria == paciente.secretaria_idsecretaria).first()

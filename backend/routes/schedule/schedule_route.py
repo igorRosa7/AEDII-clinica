@@ -6,9 +6,9 @@ from models.Usuario import Usuario
 from models import Agenda, Paciente, Usuario # Certifique-se de ter todos
 from schemas.agenda import AgendaCreate, AgendaResponse
 
-agendamento_router = APIRouter(prefix="/agenda", tags=["agenda"])
+agendamento_router = APIRouter(prefix="/agenda", tags=["scheduleRoutes"])
 
-@agendamento_router.post("/", response_model=AgendaResponse, status_code=201)
+@agendamento_router.post("/novo", response_model=AgendaResponse, status_code=201)
 async def criar_agendamento(agenda_data: AgendaCreate, db: Session = Depends(get_db)):
     
   # === 1. VALIDAÇÃO DE CHAVES ESTRANGEIRAS ===

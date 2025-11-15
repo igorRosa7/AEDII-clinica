@@ -6,7 +6,7 @@ class SecretariaCreate(BaseModel):
     horario_trab: str
     
     class Config:
-        orm_mode = True
+       from_attributes = True
 
 class SecretariaResponse(BaseModel):
     """Retorno de dados da secretária."""
