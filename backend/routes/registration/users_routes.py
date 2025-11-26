@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from dao.BancoDados import get_db
 from services.verifica_user import is_id_associado
 
-user_router = APIRouter(prefix="/usuários", tags=["userRoutes"])
+user_router = APIRouter(prefix="/usuarios", tags=["userRoutes"])
 
 @user_router.get("/", response_model=List[UsuarioResponse])
 def listar_usuarios(db: Session = Depends(get_db)):

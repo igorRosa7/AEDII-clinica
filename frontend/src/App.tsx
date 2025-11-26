@@ -1,4 +1,5 @@
 import UserForm from './Components/UserRegistration/userRegistration';
+import UserListButton from './Components/UserRegistration/Button';
 
 function App() {
   interface UserData {
@@ -21,6 +22,8 @@ function App() {
         message="Preencha todos os campos corretamente"
         messageType="error"
       />
+
+      <UserListButton />
     </>
   );
 }
