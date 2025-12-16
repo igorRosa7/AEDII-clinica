@@ -12,18 +12,18 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
 origins = [
-    "http://localhost:5173", # O domínio onde o seu React está rodando
-    "http://127.0.0.1:5173",
-    # Se você for usar proxy no Vite, adicione a origem de lá também.
+    "https://aedii-clinica.vercel.app", # <--- COLOQUE AQUI A URL DO SEU FRONT NA VERCEL
+    "*" # Use "*" apenas para testar se tudo falhar (libera para todo mundo)
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,            # Lista de origens permitidas
-    allow_credentials=True,           # Permite cookies/cabeçalhos de autenticação
-    allow_methods=["*"],              # Permite todos os métodos (GET, POST, PUT, DELETE, etc.)
-    allow_headers=["*"],              # Permite todos os cabeçalhos
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
+
 
 app.include_router(user_router)
 app.include_router(secretarie_router)
