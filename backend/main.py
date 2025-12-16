@@ -4,6 +4,9 @@ from routes.registration.secretaries_routes import secretarie_router
 from routes.registration.doctors_routes import doctor_router
 from routes.patient.patient_routes import patiente_router
 from routes.schedule.schedule_route import agendamento_router
+from routes.auth.auth_routes import auth_router
+from routes.laudo.laudo_routes import router as laudo_router
+from routes.receita.receita_routes import router as receita_router
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -27,3 +30,6 @@ app.include_router(secretarie_router)
 app.include_router(doctor_router)
 app.include_router(patiente_router)
 app.include_router(agendamento_router)
+app.include_router(auth_router)
+app.include_router(laudo_router)
+app.include_router(receita_router)
