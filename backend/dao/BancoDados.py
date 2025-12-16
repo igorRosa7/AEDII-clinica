@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 # --- CONFIGURAÇÃO POSTGRESQL (SUPABASE) ---
 
 # URL FIXA (BACKUP): Sua string atual do Supabase
-URL_SUPABASE = "postgresql://postgres:clinicaaedii@db.angsheibevviixfluzax.supabase.co:5432/postgres"
+URL_SUPABASE = "postgresql://postgres.angsheibevviixfluzax:clinicaaedii@aws-0-us-west-2.pooler.supabase.com:6543/postgres"
 
 # LÓGICA DE SEGURANÇA:
 # O código tenta pegar uma variável chamada "DATABASE_URL" (configurada no Render).
