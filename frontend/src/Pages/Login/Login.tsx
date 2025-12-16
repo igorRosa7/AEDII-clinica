@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import * as S from './LoginStyled';
+import api from '../../services/api'; // Certifique-se que o caminho está correto
 
 interface LoginProps {
   onLoginSuccess: (dadosUsuario: any) => void;
@@ -16,20 +17,26 @@ export const Login = ({ onLoginSuccess }: LoginProps) => {
     setErro('');
 
     try {
-      const response = await fetch('http://localhost:8000/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        // DICA: O padrão do schema geralmente é "username". 
-        // Estamos enviando o valor do campo 'nome' dentro da chave 'username'.
-        body: JSON.stringify({ nome: nome, senha }), 
+      // MUDANÇA 1: Usando api.post
+      // Não precisa da URL inteira, nem de headers manuais, nem de JSON.stringify
+      const response = await api.post('/auth/login', { 
+        nome, 
+        senha 
       });
 
-      const data = await response.json();
+      // MUDANÇA 2: Sucesso
+      // O axios joga a resposta do backend dentro de .data
+      onLoginSuccess(response.data);
 
-      if (response.ok) {
-        onLoginSuccess(data);
-      } else {
-        // TRATAMENTO DE ERRO (Para não travar a tela branca)
+    } catch (error: any) {
+      // MUDANÇA 3: Tratamento de Erro
+      // O axios lança erro se o status for 4xx ou 5xx.
+      
+      if (error.response && error.response.data) {
+        // O servidor respondeu, mas com erro (ex: senha errada)
+        const data = error.response.data;
+
+        // Mantive EXATAMENTE sua lógica original de leitura de erro
         if (data.detail && Array.isArray(data.detail)) {
            setErro(`Erro: ${data.detail[0].msg}`);
         } else if (typeof data.detail === 'string') {
@@ -37,9 +44,11 @@ export const Login = ({ onLoginSuccess }: LoginProps) => {
         } else {
            setErro('Erro ao entrar. Verifique suas credenciais.');
         }
+      } else {
+        // Erro de rede ou servidor fora do ar
+        console.error("Erro técnico:", error);
+        setErro('Erro de conexão com o servidor.');
       }
-    } catch (error) {
-      setErro('Erro de conexão com o servidor.');
     } finally {
       setLoading(false);
     }
