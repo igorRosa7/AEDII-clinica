@@ -12,18 +12,20 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
 origins = [
-    "https://aedii-clinica.vercel.app", # <--- COLOQUE AQUI A URL DO SEU FRONT NA VERCEL
-    "*" # Use "*" apenas para testar se tudo falhar (libera para todo mundo)
+    "http://localhost:3000",              # Para testes locais (React padrão)
+    "http://localhost:5173",              # Para testes locais (Vite)
+    "http://localhost:8000",              # Para testes locais (Backend direto)
+    "https://aedii-clinica.vercel.app",   # <--- SEU FRONT NA VERCEL (Correto!)
+    "https://aedii-clinica.onrender.com"  # <--- SEU PRÓPRIO BACKEND (Opcional, mas útil)
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
+    allow_origins=origins,     # Usa a lista explícita, SEM o "*"
+    allow_credentials=True,    # Isso exige que a origem seja específica
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 app.include_router(user_router)
 app.include_router(secretarie_router)
