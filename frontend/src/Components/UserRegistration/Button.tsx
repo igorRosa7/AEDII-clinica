@@ -1,9 +1,9 @@
 // frontend/src/components/UserListButton/UserListButton.tsx
 import React, { useState } from 'react';
-import axios from 'axios';
-import styled from 'styled-components'; // Reutilizando styled-components
+import styled from 'styled-components';
+import api from '../../services/api'; // Importando a instância do Axios configurada
 
-// --- ESTILOS SIMPLES (Poderia estar em um .styles.ts) ---
+// --- ESTILOS SIMPLES ---
 
 const FetchButton = styled.button`
   padding: 10px 20px;
@@ -16,6 +16,10 @@ const FetchButton = styled.button`
   margin-top: 20px;
   &:hover {
     background-color: #1e7e34;
+  }
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
   }
 `;
 
@@ -36,9 +40,9 @@ const UserListButton: React.FC = () => {
     setMessage('Buscando dados...');
     
     try {
-      // 🎯 Ajuste a URL base para sua API do FastAPI (ex: http://localhost:8000)
-      // Se você configurou um proxy no Vite (ex: '/api/'), use o prefixo:
-      const response = await axios.get('http://localhost:8000/usuarios/'); 
+      // MUDANÇA: Usando api.get em vez de axios direto
+      // A baseURL já está configurada no api.ts
+      const response = await api.get('/usuarios/'); 
 
       // 1. Imprime os dados no DevTools
       console.log('✅ Dados de Usuários Recebidos:', response.data);
@@ -46,7 +50,6 @@ const UserListButton: React.FC = () => {
 
     } catch (error) {
       console.error('❌ ERRO ao buscar usuários:', error);
-      // Aqui, você pode capturar o erro HTTP 404/500 do FastAPI
       setMessage('Falha ao carregar usuários. Verifique o console.');
     } finally {
       setLoading(false);

@@ -3,15 +3,16 @@ import {
   Overlay, ModalContainer, Header, CloseButton, 
   Form, Label, InputReadonly, TextArea, Footer, Button 
 } from './laudoStyled';
+import api from '../../services/api'; // <--- IMPORTANTE: Ajuste o caminho se necessário
 
-// 1. Definimos a interface das Props (O contrato do componente)
+// 1. Definimos a interface das Props
 interface LaudoModalProps {
   isOpen: boolean;
   onClose: () => void;
   paciente: string;
 }
 
-// 2. Definimos o formato dos dados que vamos enviar para a API (opcional, mas boa prática)
+// 2. Definimos o formato dos dados
 interface LaudoPayload {
   paciente: string;
   descricao: string;
@@ -29,7 +30,6 @@ const LaudoModal: React.FC<LaudoModalProps> = ({ isOpen, onClose, paciente }) =>
 
   if (!isOpen) return null;
 
-  // Tipagem do evento de submit
   const handleSalvar = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -40,29 +40,28 @@ const LaudoModal: React.FC<LaudoModalProps> = ({ isOpen, onClose, paciente }) =>
     };
 
     try {
-      const response = await fetch('http://localhost:8000/laudos/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dados),
-      });
+      // --- MUDANÇA AQUI: USANDO API.POST ---
+      // Removemos o cabeçalho manual e o JSON.stringify
+      await api.post('/laudos/', dados);
 
-      if (response.ok) {
-        alert('Laudo salvo com sucesso!');
-        onClose();
-      } else {
-        const erro = await response.json();
-        // Tratamento simples para garantir que erro.detail seja lido
-        alert(`Erro: ${erro.detail || 'Erro desconhecido'}`);
-      }
-    } catch (error) {
+      alert('Laudo salvo com sucesso!');
+      onClose();
+
+    } catch (error: any) {
       console.error(error);
-      alert('Erro de conexão com o servidor.');
+      
+      // Tratamento de erro padrão do Axios
+      if (error.response && error.response.data) {
+        const erroData = error.response.data;
+        alert(`Erro: ${erroData.detail || 'Erro desconhecido'}`);
+      } else {
+        alert('Erro de conexão com o servidor.');
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  // Tipagem do evento de mudança no textarea
   const handleDescricaoChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setDescricao(e.target.value);
   };

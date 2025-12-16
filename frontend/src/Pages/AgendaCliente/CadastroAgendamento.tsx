@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as S from '../PacienteRegistration/StyledCreatePaciente';
+import api from '../../services/api';
 
 // Interface para tipar o médico que vem do backend
 interface MedicoOption {
@@ -30,16 +31,11 @@ export const CadastroAgendamento = () => {
   useEffect(() => {
     const buscarMedicos = async () => {
       try {
-        const response = await fetch('http://localhost:8000/doutores/'); 
-        
-        if (response.ok) {
-          const data = await response.json();
-          setListaMedicos(data);
-        } else {
-          console.error("Erro ao buscar lista de médicos");
-        }
+        // MUDANÇA: api.get em vez de fetch
+        const response = await api.get('/doutores/'); 
+        setListaMedicos(response.data);
       } catch (error) {
-        console.error("Erro de conexão:", error);
+        console.error("Erro de conexão ao buscar médicos:", error);
       }
     };
 
@@ -77,21 +73,21 @@ export const CadastroAgendamento = () => {
     };
 
     try {
-      const response = await fetch('http://localhost:8000/agendas/novo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+      // MUDANÇA: api.post em vez de fetch
+      // Não precisa de headers nem JSON.stringify
+      await api.post('/agendas/novo', payload);
 
-      if (response.ok) {
-        alert('Agendamento realizado com sucesso!');
-        navigate('/sistema'); // Redireciona para a lista de agendamentos
+      alert('Agendamento realizado com sucesso!');
+      navigate('/sistema'); // Redireciona para a lista de agendamentos
+
+    } catch (error: any) {
+      // Tratamento de erro do Axios
+      if (error.response && error.response.data) {
+        const erroData = error.response.data;
+        alert(`Erro: ${erroData.detail || JSON.stringify(erroData)}`);
       } else {
-        const erro = await response.json();
-        alert(`Erro: ${erro.detail || JSON.stringify(erro)}`);
+        alert('Erro de conexão ou servidor indisponível.');
       }
-    } catch (error) {
-      alert('Erro de conexão.');
     }
   };
 

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import * as S from './StyledCreatePaciente';
 import { BotaoIrAgendamento } from '../../Components/BotaoAgendamento/BotaoGoAgendamento';
+import api from '../../services/api';
 
 export const CadastroPaciente = () => {
   // 1. Pega os dados do usuário (secretária) logado
@@ -37,22 +38,21 @@ export const CadastroPaciente = () => {
     };
 
     try {
-      const response = await fetch('http://localhost:8000/pacientes/novo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+      // MUDANÇA: Substituído fetch por api.post
+      await api.post('/pacientes/novo', payload);
 
-      if (response.ok) {
-        alert('Paciente cadastrado com sucesso!');
-        // setFormulario({...}) // Opcional: limpar campos
-      } else {
-        const erro = await response.json();
-        alert(`Erro: ${JSON.stringify(erro)}`);
-      }
-    } catch (error) {
+      alert('Paciente cadastrado com sucesso!');
+      // setFormulario({...}) // Opcional: limpar campos
+
+    } catch (error: any) {
       console.error(error);
-      alert('Erro de conexão.');
+      
+      // Tratamento de erro do Axios
+      if (error.response && error.response.data) {
+        alert(`Erro: ${JSON.stringify(error.response.data)}`);
+      } else {
+        alert('Erro de conexão.');
+      }
     }
   };
 

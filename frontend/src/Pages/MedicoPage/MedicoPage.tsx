@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import * as S from './medicoPageStyled'; // Importando estilos
+import api from '../../services/api'; // <--- IMPORTAÇÃO DA API
 
 // --- IMPORTAÇÃO DOS MODALS ---
-// Ajuste os caminhos caso seus arquivos tenham nomes diferentes (ex: index.tsx ou Laudo.tsx)
 import LaudoModal from '../../Components/Laudo/Laudo';
 import ReceitaModal from '../../Components/Receita/Receita'; 
 
@@ -39,12 +39,13 @@ export const PaginaMedico = () => {
       if (!usuarioLogado.id) return;
 
       try {
-        const response = await fetch(`http://localhost:8000/agendas/medico/${usuarioLogado.id}`);
+        // --- MUDANÇA AQUI ---
+        // Usa api.get e remove o http://localhost
+        const response = await api.get(`/agendas/medico/${usuarioLogado.id}`);
         
-        if (response.ok) {
-          const data = await response.json();
-          setAgendas(data);
-        }
+        // O axios já entrega os dados em response.data
+        setAgendas(response.data);
+        
       } catch (error) {
         console.error("Erro ao buscar agenda do médico", error);
       } finally {
@@ -57,7 +58,7 @@ export const PaginaMedico = () => {
 
   // --- FORMATAÇÃO ---
   const formatarData = (dataISO: string) => {
-    return new Date(dataISO).toLocaleDateString('pt-BR');
+    return new Date(dataISO).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
   };
 
   const formatarHora = (hora: string) => {

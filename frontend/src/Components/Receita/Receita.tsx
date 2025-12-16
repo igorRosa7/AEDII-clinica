@@ -6,6 +6,7 @@ import {
   Overlay, ModalContainer, Header, CloseButton, 
   Form, Label, InputReadonly, TextArea, Footer, Button 
 } from "../Laudo/laudoStyled";
+import api from '../../services/api'; // <--- IMPORTAÇÃO DA API
 
 interface ReceitaModalProps {
   isOpen: boolean;
@@ -44,22 +45,22 @@ const ReceitaModal: React.FC<ReceitaModalProps> = ({ isOpen, onClose, paciente }
     };
 
     try {
-      const response = await fetch('http://localhost:8000/receitas/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dados),
-      });
+      // --- MUDANÇA: USANDO API.POST ---
+      await api.post('/receitas/', dados);
 
-      if (response.ok) {
-        alert('Receita salva com sucesso!');
-        onClose();
-      } else {
-        const erro = await response.json();
-        alert(`Erro: ${erro.detail}`);
-      }
-    } catch (error) {
+      alert('Receita salva com sucesso!');
+      onClose();
+
+    } catch (error: any) {
       console.error(error);
-      alert('Erro de conexão.');
+      
+      // Tratamento de erro do Axios
+      if (error.response && error.response.data) {
+        const erroData = error.response.data;
+        alert(`Erro: ${erroData.detail || 'Erro desconhecido'}`);
+      } else {
+        alert('Erro de conexão.');
+      }
     } finally {
       setLoading(false);
     }
