@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as S from './listagemAgendaStyled';
+import api from '../../../services/api';
 
 interface AgendaItem {
   idagenda: number;
@@ -18,11 +19,12 @@ export const ListaAgendamentos = () => {
   useEffect(() => {
     const fetchAgendas = async () => {
       try {
-        const response = await fetch('http://localhost:8000/agendas/');
-        if (response.ok) {
-          const data = await response.json();
-          setAgendas(data);
-        }
+       
+        const response = await api.get('/agendas/');
+        
+       
+        setAgendas(response.data);
+        
       } catch (error) {
         console.error("Erro ao buscar agendas", error);
       } finally {
@@ -34,7 +36,10 @@ export const ListaAgendamentos = () => {
 
   // Formata a data para ficar bonita (dd/mm/aaaa)
   const formatarData = (dataISO: string) => {
-    return new Date(dataISO).toLocaleDateString('pt-BR');
+    // Tratamento para evitar erro se a data vier nula ou inválida
+    if (!dataISO) return '-';
+    return new Date(dataISO).toLocaleDateString('pt-BR', { timeZone: 'UTC' }); 
+   
   };
 
   return (
